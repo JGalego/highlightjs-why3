@@ -27,11 +27,16 @@ jobs:
     - run: npm install
     - name: Build why3.min.js
       run: |
-        mv extra/highlightjs-why3/dist/why3.min.js extra/highlightjs-why3/dist/why3.min.js.orig
+        [ -f extra/highlightjs-why3/dist/why3.min.js ] && \
+          mv extra/highlightjs-why3/dist/why3.min.js extra/highlightjs-why3/dist/why3.min.js.orig || true
         node ./tools/build.js -t cdn
     - name: Check that the committed version matches
       id: diff_step
       run: |
+        if [ ! -f extra/highlightjs-why3/dist/why3.min.js.orig ]; then
+          echo "dist/why3.min.js is not committed to the repository"
+          exit 1
+        fi
         git diff --color --no-index extra/highlightjs-why3/dist/why3.min.js.orig extra/highlightjs-why3/dist/why3.min.js
     - name: Uploading the regenerated why3.min.js
       id: upload_step
@@ -45,4 +50,4 @@ jobs:
       uses: actions/github-script@v8
       with:
         script: |
-          core.setFailed('dist/why3.min.js is outdated, use the version attached to this build')
+          core.setFailed('dist/why3.min.js is missing or outdated, download the artifact attached to this build and commit it')
