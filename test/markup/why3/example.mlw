@@ -1,0 +1,56 @@
+(** Why3 sample file for syntax highlighting tests *)
+
+theory Arithmetic
+  use int.Int
+
+  (** A simple lemma about addition *)
+  lemma add_comm : forall x y : int. x + y = y + x
+
+  (** An axiom *)
+  axiom zero_neutral : forall x : int. x + 0 = x
+end
+
+theory ListExample
+  use export list.List
+  use int.Int
+
+  (** Length of a list *)
+  function length (l : list 'a) : int =
+    match l with
+    | Nil      -> 0
+    | Cons _ t -> 1 + length t
+    end
+
+  lemma length_nonneg : forall l : list 'a. length l >= 0
+end
+
+module Factorial
+
+  use int.Int
+  use ref.Ref
+
+  (** Recursive factorial function *)
+  let rec factorial (n : int) : int
+    requires { n >= 0 }
+    ensures  { result >= 1 }
+    variant  { n }
+  =
+    if n = 0 then 1
+    else n * factorial (n - 1)
+
+  (** Imperative factorial using a loop *)
+  let factorial_loop (n : int) : int
+    requires { n >= 0 }
+    ensures  { result >= 1 }
+  =
+    let r = ref 1 in
+    let i = ref 0 in
+    while !i < n do
+      invariant { !r >= 1 }
+      variant   { n - !i }
+      i := !i + 1;
+      r := !r * !i
+    done;
+    !r
+
+end

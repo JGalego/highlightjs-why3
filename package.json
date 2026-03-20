@@ -1,0 +1,35 @@
+{
+  "name": "highlightjs-why3",
+  "version": "1.0.0",
+  "description": "A highlight.js language grammar for the WhyML / Why3 verification platform.",
+  "main": "src/languages/why3.js",
+  "files": [
+    "src/languages/why3.js",
+    "dist/why3.es.min.js",
+    "dist/why3.min.js"
+  ],
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jgalego/highlightjs-why3.git"
+  },
+  "keywords": [
+    "why3",
+    "highlight.js",
+    "highlightjs",
+    "syntax",
+    "verification"
+  ],
+  "author": "João Galego",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/jgalego/highlightjs-why3/issues"
+  },
+  "homepage": "https://github.com/jgalego/highlightjs-why3#readme",
+  "devDependencies": {
+    "highlight.js": "^11.11.1",
+    "mocha": "^11.3.0"
+  }
+}

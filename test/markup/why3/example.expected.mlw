@@ -1,0 +1,56 @@
+<span class="hljs-doctag">(** Why3 sample file for syntax highlighting tests *)</span>
+
+<span class="hljs-keyword">theory</span> <span class="hljs-title">Arithmetic</span>
+  <span class="hljs-keyword">use</span> <span class="hljs-built_in">int</span>.Int
+
+  <span class="hljs-doctag">(** A simple lemma about addition *)</span>
+  <span class="hljs-keyword">lemma</span> add_comm : <span class="hljs-built_in">forall</span> x y : <span class="hljs-built_in">int</span>. x + y = y + x
+
+  <span class="hljs-doctag">(** An axiom *)</span>
+  <span class="hljs-keyword">axiom</span> zero_neutral : <span class="hljs-built_in">forall</span> x : <span class="hljs-built_in">int</span>. x + <span class="hljs-number">0</span> = x
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">theory</span> <span class="hljs-title">ListExample</span>
+  <span class="hljs-keyword">use</span> <span class="hljs-keyword">export</span> <span class="hljs-built_in">list</span>.List
+  <span class="hljs-keyword">use</span> <span class="hljs-built_in">int</span>.Int
+
+  <span class="hljs-doctag">(** Length of a list *)</span>
+  <span class="hljs-keyword">function</span> length (l : <span class="hljs-built_in">list</span> <span class="hljs-symbol">&#x27;a</span>) : <span class="hljs-built_in">int</span> =
+    <span class="hljs-keyword">match</span> l <span class="hljs-keyword">with</span>
+    | Nil      -&gt; <span class="hljs-number">0</span>
+    | Cons _ t -&gt; <span class="hljs-number">1</span> + length t
+    <span class="hljs-keyword">end</span>
+
+  <span class="hljs-keyword">lemma</span> length_nonneg : <span class="hljs-built_in">forall</span> l : <span class="hljs-built_in">list</span> <span class="hljs-symbol">&#x27;a</span>. length l &gt;= <span class="hljs-number">0</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">module</span> <span class="hljs-title">Factorial</span>
+
+  <span class="hljs-keyword">use</span> <span class="hljs-built_in">int</span>.Int
+  <span class="hljs-keyword">use</span> ref.Ref
+
+  <span class="hljs-doctag">(** Recursive factorial function *)</span>
+  <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> factorial (n : <span class="hljs-built_in">int</span>) : <span class="hljs-built_in">int</span>
+    <span class="hljs-built_in">requires</span> { n &gt;= <span class="hljs-number">0</span> }
+    <span class="hljs-built_in">ensures</span>  { <span class="hljs-built_in">result</span> &gt;= <span class="hljs-number">1</span> }
+    <span class="hljs-built_in">variant</span>  { n }
+  =
+    <span class="hljs-keyword">if</span> n = <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-number">1</span>
+    <span class="hljs-keyword">else</span> n * factorial (n - <span class="hljs-number">1</span>)
+
+  <span class="hljs-doctag">(** Imperative factorial using a loop *)</span>
+  <span class="hljs-keyword">let</span> factorial_loop (n : <span class="hljs-built_in">int</span>) : <span class="hljs-built_in">int</span>
+    <span class="hljs-built_in">requires</span> { n &gt;= <span class="hljs-number">0</span> }
+    <span class="hljs-built_in">ensures</span>  { <span class="hljs-built_in">result</span> &gt;= <span class="hljs-number">1</span> }
+  =
+    <span class="hljs-keyword">let</span> r = ref <span class="hljs-number">1</span> <span class="hljs-keyword">in</span>
+    <span class="hljs-keyword">let</span> i = ref <span class="hljs-number">0</span> <span class="hljs-keyword">in</span>
+    <span class="hljs-keyword">while</span> !i &lt; n <span class="hljs-keyword">do</span>
+      <span class="hljs-built_in">invariant</span> { !r &gt;= <span class="hljs-number">1</span> }
+      <span class="hljs-built_in">variant</span>   { n - !i }
+      i := !i + <span class="hljs-number">1</span>;
+      r := !r * !i
+    <span class="hljs-keyword">done</span>;
+    !r
+
+<span class="hljs-keyword">end</span>

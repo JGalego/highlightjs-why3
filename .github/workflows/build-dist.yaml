@@ -1,0 +1,48 @@
+name: Minified Build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    # these steps roughly follow https://github.com/highlightjs/highlight.js/blob/main/extra/3RD_PARTY_QUICK_START.md
+    steps:
+    - name: Checkout highlightjs
+      uses: actions/checkout@v6
+      with:
+        repository: 'highlightjs/highlight.js'
+    - name: Checkout highlightjs-why3
+      uses: actions/checkout@v6
+      with:
+        path: extra/highlightjs-why3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - name: Build why3.min.js
+      run: |
+        mv extra/highlightjs-why3/dist/why3.min.js extra/highlightjs-why3/dist/why3.min.js.orig
+        node ./tools/build.js -t cdn
+    - name: Check that the committed version matches
+      id: diff_step
+      run: |
+        git diff --color --no-index extra/highlightjs-why3/dist/why3.min.js.orig extra/highlightjs-why3/dist/why3.min.js
+    - name: Uploading the regenerated why3.min.js
+      id: upload_step
+      if: failure() && steps.diff_step.outcome == 'failure'
+      uses: actions/upload-artifact@v7
+      with:
+        name: minified
+        path: extra/highlightjs-why3/dist/why3.min.js
+    - name: Report failure
+      if: failure() && steps.upload_step.outcome == 'success'
+      uses: actions/github-script@v8
+      with:
+        script: |
+          core.setFailed('dist/why3.min.js is outdated, use the version attached to this build')
