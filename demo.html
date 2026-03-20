@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Why3 Syntax Highlighting Demo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 2em auto; padding: 0 1em; }
+  </style>
+</head>
+<body>
+  <h1>Why3 Syntax Highlighting Demo</h1>
+
+  <pre><code class="language-why3">
+(** Why3 sample file for syntax highlighting tests *)
+
+theory Arithmetic
+  use int.Int
+
+  (** A simple lemma about addition *)
+  lemma add_comm : forall x y : int. x + y = y + x
+
+  (** An axiom *)
+  axiom zero_neutral : forall x : int. x + 0 = x
+end
+
+module Factorial
+
+  use int.Int
+  use ref.Ref
+
+  (** Recursive factorial function *)
+  let rec factorial (n : int) : int
+    requires { n >= 0 }
+    ensures  { result >= 1 }
+    variant  { n }
+  =
+    if n = 0 then 1
+    else n * factorial (n - 1)
+
+  (** Imperative factorial using a loop *)
+  let factorial_loop (n : int) : int
+    requires { n >= 0 }
+    ensures  { result >= 1 }
+  =
+    let r = ref 1 in
+    let i = ref 0 in
+    while !i &lt; n do
+      invariant { !r >= 1 }
+      variant   { n - !i }
+      i := !i + 1;
+      r := !r * !i
+    done;
+    !r
+
+end
+  </code></pre>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="dist/why3.min.js"></script>
+  <script>
+    hljs.highlightAll();
+  </script>
+</body>
+</html>
